@@ -25,7 +25,7 @@ async function test(){
 		if(signInUrl=='http://m.hijup.com:8000/en/sign_in'){
 			await page.waitForSelector("input[type='email']")
       await page.click("input[type='email']")
-			await page.keyboard.type('reyapr@gmail.com');
+			await page.keyboard.type('reyapr1@gmail.com');
 			await page.click("input[type='password']")
 			await page.keyboard.type('hacktiv8');
 			await page.keyboard.press('Enter')
@@ -42,7 +42,11 @@ async function test(){
 			await page.click('#app > div > div:nth-child(3) > div > div > div > div > div > div:nth-child(2) > div > div:nth-child(2) > div > div:nth-child(4) > div > div:nth-child(2) > div > div > div:nth-child(1) > a')
 			
 			//in detail Product Page
+			await page.waitForSelector('#buy-now-button')
+			await page.waitForSelector('#app > div > div:nth-child(2) > div > div > div > div > div > div > div > div:nth-child(2) > div > div.MuiGrid-typeItem-22.MuiGrid-grid-sm-5-64.MuiGrid-grid-md-5-77.MuiGrid-grid-lg-5-90 > div > div:nth-child(2) > div > div > div > div > div > div > div:nth-child(1) > div > div:nth-child(2) > div > div:nth-child(1)')
+      await page.click('#app > div > div:nth-child(2) > div > div > div > div > div > div > div > div:nth-child(2) > div > div.MuiGrid-typeItem-22.MuiGrid-grid-sm-5-64.MuiGrid-grid-md-5-77.MuiGrid-grid-lg-5-90 > div > div:nth-child(2) > div > div > div > div > div > div > div:nth-child(1) > div > div:nth-child(2) > div > div:nth-child(1)')
 			await page.click('#buy-now-button')
+			
 	
 			await page.waitForSelector('#app > div > div:nth-child(2) > header > div > div.header-primary > div > div.shrink.column.user-menu > div > div:nth-child(2) > div > a > span > span')
 			let totalCart = await page.evaluate(el=> el.innerHTML, await page.$('#app > div > div:nth-child(2) > header > div > div.header-primary > div > div.shrink.column.user-menu > div > div:nth-child(2) > div > a > span > span'))
@@ -74,11 +78,15 @@ function payTheProduct(page){
     },5000)
 }
 
-function alamatPengiriman(page){
-	setTimeout(async function(){
+async function alamatPengiriman(page){
+	// setTimeout(async function(){
 		await page.waitForSelector('#phone-shipping')
 		await page.click('#phone-shipping')
 		await page.keyboard.type('085723087803')
+		let phoneNum = await page.$('#phone-shipping')
+		let getPhoneNum = await page.evaluate(el=> el.getAttribute('value'),phoneNum)
+		console.log(getPhoneNum)
+		
 		
 		await page.click("label[for='province-shipping']")
 		await page.click("label[for='province-shipping']")
@@ -97,7 +105,10 @@ function alamatPengiriman(page){
 		await setTimeout(async function(){
 			await page.click('#text-area-shipping')
 			await page.keyboard.type('Jl. Ra Kosasih, Ngaweng Gg H. Maksudi RT 03 RW 18 No. 75')
-		},5000)
+			let address = await page.$('#text-area-shipping')
+			let getAddress = await page.evaluate(el=> el.innerHTML,address)
+			console.log(getAddress)
+		},4000)
 
 		await setTimeout(async function(){
 			await page.click('#select-shipping')
@@ -107,10 +118,28 @@ function alamatPengiriman(page){
 			await setTimeout(async function(){
 					await page.click('#continue-to-payment-shipping')
 					await page.waitForNavigation()
-					await paymentMethods(page)
 			},2500)
-		},8000)
-	},3000)
+		},9000)
+		setTimeout(async function(){
+			await page.waitForSelector('#bank_transfer')
+			await page.click('#bank_transfer')
+			await page.waitForSelector('#continue-payment')
+			await page.click('#continue-payment')
+			await page.waitForNavigation()
+			await page.waitForSelector('#confirmation-payment-button')
+			await page.click('#confirmation-payment-button')
+			await page.waitForSelector("label[for='bankReceived-confirmation']")
+			await page.click("label[for='bankReceived-confirmation']")
+			await page.click("label[for='bankReceived-confirmation']")
+			setTimeout(async function(){
+				await page.click('#confirmation-payment-now')
+				await page.waitForNavigation()
+				let orderHistory = await page.url()
+				console.log(orderHistory)
+				console.log(await page.url())
+			},2000)
+		},15000)
+	// },3000)
 }
 
 async function paymentMethods(page){
@@ -128,6 +157,11 @@ async function paymentMethods(page){
 			await page.click("label[for='bankReceived-confirmation']")
 			setTimeout(async function(){
 					await page.click('#confirmation-payment-now')
+					await page.waitForNavigation()
+					let orderHistory = await page.url()
+					let orderHistoryTitle = await page.title()
+					console.log(orderHistory,'---->history')
+					console.log(orderHistoryTitle,'title')
 			},2000)
     },4000)
 }
