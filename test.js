@@ -136,7 +136,6 @@ async function alamatPengiriman(page){
 				await page.waitForNavigation()
 				let orderHistory = await page.url()
 				console.log(orderHistory)
-				console.log(await page.url())
 			},2000)
 		},15000)
 	// },3000)
